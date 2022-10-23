@@ -1,6 +1,6 @@
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/utils/Counters.sol"
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
@@ -24,12 +24,20 @@ contract NFTMarketplace is ERC721URIStorage {
     bool sold;
   }
 
+  event MarketItemCreated (
+    uint256 indexed tokenId,
+    address seller,
+    address owner,
+    uint256 price,
+    bool sold
+  );
+
   constructor() ERC721("Metaverse Tokens", "METT") {
     owner = payable(msg.sender);
   }
 
   function updateListingPrice(uint _listingPrice) public payable {
-    require(owner == msg.sender, "Only marketplace owner can update the listing price.")
+    require(owner == msg.sender, "Only marketplace owner can update the listing price.");
     listingPrice = _listingPrice;
   }
 
@@ -53,7 +61,7 @@ contract NFTMarketplace is ERC721URIStorage {
     uint256 price
   ) private {
     require(price > 0, "Price must be at least 1 wei");
-    require(msg.value == listingPrice, "Price must be equal to listingPrice)
+    require(msg.value == listingPrice, "Price must be equal to listingPrice");
 
     idToMarketItem[tokenId] = MarketItem(
       tokenId,
@@ -113,9 +121,9 @@ contract NFTMarketplace is ERC721URIStorage {
     for (uint i = 0; i < itemCount; i++) {
       if (idToMarketItem[i + 1].owner == address(this)) {
       	 uint currentId = i + 1;
-	 MarketItem storage currentItem = idToMarketItem[currentIndex];
+	 MarketItem storage currentItem = idToMarketItem[currentId];
 	 items[currentIndex] = currentItem;
-	 currentIdex += 1;
+	 currentIndex += 1;
       }
     }
     return items;
